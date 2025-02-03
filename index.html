@@ -11,16 +11,15 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh; /* Full height of the screen */
+            height: 100vh;
             background: linear-gradient(to right, #6a11cb, #2575fc);
             color: white;
             flex-direction: column;
             position: relative;
             margin: 0;
-            overflow: hidden; /* Hide overflow to keep everything within the viewport */
+            overflow: hidden;
         }
 
-        /* Header Styles */
         .header {
             position: fixed;
             top: 0;
@@ -52,11 +51,10 @@
             margin-left: 10px;
         }
 
-        /* Navigation Links */
         .nav-links {
             display: flex;
             gap: 20px;
-            margin-left: auto; /* Pushes the navigation links to the right */
+            margin-left: auto;
         }
 
         .nav-links a {
@@ -72,7 +70,6 @@
             background-color: #007bff;
         }
 
-        /* Container and login form styles */
         .auth-container {
             background: rgba(255, 255, 255, 0.9);
             padding: 20px;
@@ -111,7 +108,6 @@
             width: 48%;
         }
 
-        /* Animated Title in the upper-left corner */
         .animated-title {
             position: absolute;
             top: 15px;
@@ -124,16 +120,15 @@
             animation: moveDown 4s ease-in-out infinite;
         }
 
-        /* Keyframe animation for moving the title from top to bottom */
         @keyframes moveDown {
             0% {
-                transform: translateY(-100px); /* Start off-screen */
+                transform: translateY(-100px);
             }
             50% {
-                transform: translateY(100px); /* Move down */
+                transform: translateY(100px);
             }
             100% {
-                transform: translateY(-100px); /* Return off-screen */
+                transform: translateY(-100px);
             }
         }
 
@@ -141,10 +136,9 @@
             width: 40px;
             height: auto;
             margin-right: 10px;
-            animation: bounce 1s ease-in-out infinite; /* Apply the bounce animation */
+            animation: bounce 1s ease-in-out infinite;
         }
 
-        /* Footer Icons for Gmail and Facebook */
         .social-icons {
             display: flex;
             justify-content: center;
@@ -154,8 +148,7 @@
 
         .social-icons img {
             width: 40px;
-            height: 40px; /* Ensure the height and width are the same */
-            cursor: pointer;
+            height: 40px;
         }
 
         .error-message {
@@ -166,13 +159,11 @@
     </style>
 </head>
 <body>
-    <!-- Header Section -->
     <div class="header">
         <div class="logo-container">
             <img src="Images/logo1.jpg" alt="Logo" class="logo">
             <span class="logo-text">AI DETECTOR</span>
         </div>
-        <!-- Navigation Links (Contact & About) -->
         <div class="nav-links">
             <a href="Contact.html">Contact</a>
             <a href="#Features.html">Feature</a>
@@ -180,13 +171,11 @@
         </div>
     </div>
 
-    <!-- Animated Title in the upper-left corner -->
     <div class="animated-title">
         <img src="Images/logo1.jpg" alt="Logo" class="logo-small">
         AI Text Detector
     </div>
 
-    <!-- Login Form -->
     <div class="auth-container" id="loginContainer">
         <h2>Login</h2>
         <input type="text" id="username" placeholder="Enter Username" required>
@@ -198,7 +187,6 @@
         <p id="attemptsMessage" style="color: red; display: none;">You have reached the maximum login attempts for the admin.</p>
     </div>
 
-    <!-- Sign Up Form (Initially hidden) -->
     <div class="auth-container" id="signUpContainer" style="display: none;">
         <h2>Sign Up</h2>
         <input type="text" id="signupUsername" placeholder="Enter Username" required>
@@ -209,7 +197,6 @@
         <p id="errorMessage" class="error-message" style="display: none;"></p>
     </div>
 
-    <!-- Social Icons (Gmail and Facebook) -->
     <div class="social-icons">
         <a href="https://mail.google.com/" target="_blank">
             <img src="Images/gm.png" alt="Gmail">
@@ -220,6 +207,7 @@
     </div>
 
     <script>
+        let users = [];
         let isAdminLoggedIn = false;
         let isAdminAlreadyLoggedIn = false;
         let adminLoginAttempts = 0;
@@ -227,12 +215,18 @@
         function login() {
             const username = document.getElementById("username").value;
             const password = document.getElementById("password").value;
-            
+
             if (adminLoginAttempts >= 3) {
                 document.getElementById("attemptsMessage").style.display = 'block';
                 return;
             }
 
+            if (username.length < 5 || username.length > 100 || password.length < 5 || password.length > 100) {
+                alert("Username and password must be between 5 and 100 characters.");
+                return;
+            }
+
+            // Admin login check
             if (username === "admin" && password === "admin123") {
                 if (isAdminAlreadyLoggedIn) {
                     alert("The admin account is already logged in.");
@@ -241,14 +235,25 @@
                 isAdminLoggedIn = true;
                 isAdminAlreadyLoggedIn = true;
                 window.location.href = "AI Detector.html";
-            } else if (username.length === 6 && password === "user123" && !isAdminLoggedIn) {
-                window.location.href = "AI Detector.html";
             } else {
-                adminLoginAttempts++;
-                if (adminLoginAttempts >= 3) {
-                    document.getElementById("attemptsMessage").style.display = 'block';
+                // Check if user exists
+                let userFound = false;
+                for (let user of users) {
+                    if (user.username === username && user.password === password) {
+                        userFound = true;
+                        break;
+                    }
                 }
-                alert("Invalid username or password.");
+
+                if (userFound) {
+                    window.location.href = "AI Detector.html";
+                } else {
+                    adminLoginAttempts++;
+                    if (adminLoginAttempts >= 3) {
+                        document.getElementById("attemptsMessage").style.display = 'block';
+                    }
+                    alert("Invalid username or password.");
+                }
             }
         }
 
@@ -268,23 +273,27 @@
             const password = document.getElementById("signupPassword").value;
             const errorMessage = document.getElementById("errorMessage");
 
-            // Check if the username is "admin"
+            if (username.length < 5 || username.length > 100 || password.length < 5 || password.length > 100) {
+                alert("Username and password must be between 5 and 100 characters.");
+                return;
+            }
+
             if (username.toLowerCase() === "admin") {
                 errorMessage.style.display = 'block';
                 errorMessage.textContent = "The username 'admin' is restricted and cannot be used.";
                 return;
             }
 
-            // Validate Gmail email format
             if (!email.endsWith("@gmail.com")) {
                 alert("Please enter a valid Gmail address.");
                 return;
             }
 
-            // Handle sign-up (for now, we'll just log the details)
+            // Add the new user to the users array
+            users.push({ username, email, password });
             console.log("Signed up with username:", username, "Email:", email, "Password:", password);
             alert("Sign up successful!");
-            showLogin(); // Redirect back to the login form after successful sign up
+            showLogin(); 
         }
     </script>
 </body>
