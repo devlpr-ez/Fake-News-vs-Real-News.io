@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-scale=1.0">
+    <link rel="icon" type="image/jpg" href="Images/login.jpg">
+    <title>Contact Us</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+            margin-top: 60px;
+        }
+
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: #333;
+            color: white;
+            padding: 8px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            box-sizing: border-box;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo {
+            width: 30px;
+            height: auto;
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .contact-container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            color: black;
+            text-align: center;
+            margin-top: 100px;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Section -->
+    <div class="header">
+        <div class="logo-container">
+            <img src="Images/logo1.jpg" alt="Logo" class="logo">
+            <span class="logo-text">AI DETECTOR</span>
+        </div>
+    </div>
+
+    <form action="https://formspree.io/f/mzzdgyjj" method="POST">
+        <input type="text" name="name" placeholder="Your Name" required>
+        <input type="email" name="email" placeholder="Your Email" required>
+        <textarea name="message" placeholder="Your Message" rows="4" required></textarea>
+        <button type="submit">Submit</button>
+        
+        <!-- Logout Button -->
+        <button onclick="logout()">Back</button>
+    </div>
+
+    <!-- Script to handle logout -->
+    <script>
+        function logout() {
+            // Redirect to the login page (web.html)
+            window.location.href = "Login web.html";
+        }
+    </script>
+
+</body>
+</html>

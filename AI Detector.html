@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/jpg" href="Images/logo1.jpg">
+    <title>AI Text Detector By Zedrix Reyes</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            color: white;
+            flex-direction: column;
+            position: relative;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border: 2px solid #007bff; /* Explicitly added border */
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            color: black;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .logo {
+            display: block;
+            margin: 0 auto 15px;
+            width: 100px;
+            height: auto;
+        }
+        textarea {
+            width: 90%;
+            height: 100px;
+            margin-bottom: 10px;
+            resize: none; /* Prevents resizing of the textarea */
+            border: 3px solid #007bff; /* Adds a thicker, clearer border to the textarea */
+            border-radius: 8px; /* Optional: adds rounded corners to the border */
+            padding: 10px;
+            background-color: white; /* Makes the background of the textarea white for better contrast */
+            color: black; /* Ensures the text is visible */
+            font-size: 16px; /* Optional: sets a readable font size */
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        #result {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .highlight {
+            background-color: yellow;
+            color: black;
+            font-weight: bold;
+        }
+        .page-title {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        .logo-small {
+            width: 40px;
+            height: auto;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Title and Logo in the upper-left corner -->
+    <div class="page-title" onclick="logout()">
+        <img src="Images/logo1.jpg" alt="Logo" class="logo-small">
+        AI Text Detector
+    </div>
+
+    <div class="container" id="mainApp">
+        <img src="Images/logo.gif" alt="AI Text Detector Logo" class="logo">
+        <h2>AI Text Detector</h2>
+        <textarea id="textInput" placeholder="Enter text here..."></textarea>
+        <button onclick="detectAI()">Analyze Text</button>
+        <button onclick="logout()">Logout</button>
+        <!-- Added a div to display result -->
+        <div id="result"></div>
+    </div>
+    <script>
+        function detectAI() {
+            const text = document.getElementById("textInput").value.trim();
+
+            if (text === "") {
+                document.getElementById("result").innerHTML = "Please enter some text for analysis.";
+                return;
+            }
+
+            let sentences = text.split('.').slice(0, 10).join('.') + '.'; // Only considering the first 10 sentences
+
+            // Patterns for AI and human-like text
+            const aiPatterns = [
+                "In conclusion", "As an AI model", "However,", "Furthermore,", "I believe that", "Based on my understanding", "It seems that", "AI-generated content", "Therefore", "As a result", "I have been trained", "This article is generated", "As part of my task", "Let me summarize"
+            ];
+            const humanPatterns = [
+                "I think", "In my opinion", "It is clear that", "One could argue", "From my perspective", "Based on experience", "I've noticed", "As a person", "Interestingly", "To put it simply", "It reminds me of", "I would suggest", "What I find interesting is", "I remember"
+            ];
+
+            let aiPatternMatch = 0;
+            let humanPatternMatch = 0;
+            let aiRepetitionScore = 0;
+            let humanRepetitionScore = 0;
+            let textLength = sentences.split(' ').length;
+
+            // Matching AI and human patterns
+            aiPatterns.forEach(pattern => {
+                if (sentences.includes(pattern)) aiPatternMatch++;
+            });
+
+            humanPatterns.forEach(pattern => {
+                if (sentences.includes(pattern)) humanPatternMatch++;
+            });
+
+            const numSentences = sentences.split('.').length;
+            if (numSentences > 3) aiRepetitionScore = numSentences / 3;
+
+            const avgSentenceLength = textLength / numSentences;
+            humanRepetitionScore = avgSentenceLength < 15 ? 10 : 0;
+
+            // Analyzing punctuation frequency
+            const punctuationPatterns = /[.!?]/g;
+            const punctuationCount = (sentences.match(punctuationPatterns) || []).length;
+            const punctuationRatio = punctuationCount / numSentences;
+
+            // Analyzing sentence complexity
+            const avgWordsPerSentence = textLength / numSentences;
+
+            // Scoring AI vs Human likelihood
+            const aiLikelihood = ((aiPatternMatch / aiPatterns.length) * 40) + (aiRepetitionScore * 30) + (textLength / 150) + (punctuationRatio * 20) + (avgWordsPerSentence < 15 ? 10 : 0);
+            const humanLikelihood = ((humanPatternMatch / humanPatterns.length) * 50) + (humanRepetitionScore * 30) + (textLength / 150) + (punctuationRatio * 10) + (avgWordsPerSentence < 20 ? 10 : 0);
+
+            let resultText = "";
+            let resultPercentage = 0;
+            let highlightTextContent = "";
+
+            // Comparing AI and human likelihoods
+            const difference = Math.abs(aiLikelihood - humanLikelihood);
+            if (aiLikelihood > humanLikelihood && aiLikelihood > 60) {
+                resultPercentage = Math.min(aiLikelihood, 100).toFixed(2);
+                resultText = `AI-generated text detected! AI likelihood: ${resultPercentage}%<br>`;
+                highlightTextContent = highlightText(sentences, aiPatterns);
+                document.getElementById("result").innerHTML = `${resultText}<span class="highlight">${highlightTextContent}</span>`;
+            } else if (humanLikelihood > aiLikelihood && humanLikelihood > 60) {
+                resultPercentage = Math.min(humanLikelihood, 100).toFixed(2);
+                resultText = `Text appears human-written. Human likelihood: ${resultPercentage}%<br>`;
+                document.getElementById("result").innerHTML = `${resultText}`;
+            } else {
+                resultText = `Uncertain detection. AI likelihood: ${(aiLikelihood * 100).toFixed(2)}%, Human likelihood: ${(humanLikelihood * 100).toFixed(2)}%<br>`;
+                document.getElementById("result").innerHTML = `${resultText}`;
+            }
+        }
+
+        function highlightText(text, patterns) {
+            let highlightedText = text;
+
+            patterns.forEach(pattern => {
+                const regex = new RegExp(`(${pattern})`, 'gi');
+                highlightedText = highlightedText.replace(regex, '<span class="highlight">$1</span>');
+            });
+
+            return highlightedText;
+        }
+
+        // Logout function to redirect to login.html
+        function logout() {
+            window.location.href = "Login web.html"; // Redirects back to login page
+        }
+    </script>
+</body>
+</html>
