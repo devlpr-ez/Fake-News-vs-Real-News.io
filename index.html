@@ -713,10 +713,11 @@
         </div>
     </div>
 
-   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
 
 <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+  import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-lite.js";
+  import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/9
     // ---------- Firebase Initialization ----------
     const firebaseConfig = {
         apiKey: "AIzaSyD8vva-q0gUwalXisgLyfJZb9q4ENmELSs",
@@ -1030,3 +1031,4 @@
 </script>
 
 </html>
+
