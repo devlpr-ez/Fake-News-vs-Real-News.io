@@ -713,335 +713,319 @@
         </div>
     </div>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-lite.js";
-import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-storage.js";
+   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
 
-// ---------- Firebase Config ----------
-const firebaseConfig = {
-    apiKey: "AIzaSyD8vva-q0gUwalXisgLyfJZb9q4ENmELSs",
-    authDomain: "photobooth-eefda.firebaseapp.com",
-    projectId: "photobooth-eefda",
-    storageBucket: "photobooth-eefda.appspot.com",
-    messagingSenderId: "192728890264",
-    appId: "1:192728890264:web:922d4a2707a7af45e389ed",
-    measurementId: "G-BTC4XEK82Q"
-};
+<script>
+    // ---------- Firebase Initialization ----------
+    const firebaseConfig = {
+        apiKey: "AIzaSyD8vva-q0gUwalXisgLyfJZb9q4ENmELSs",
+        authDomain: "photobooth-eefda.firebaseapp.com",
+        projectId: "photobooth-eefda",
+        storageBucket: "photobooth-eefda.appspot.com",
+        messagingSenderId: "192728890264",
+        appId: "1:192728890264:web:922d4a2707a7af45e389ed",
+        measurementId: "G-BTC4XEK82Q"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const storage = firebase.storage();
 
-// ---------- Initialize Firebase ----------
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const storage = getStorage(app);
-const photosCollection = collection(db, "photos");
+    // ---------- Global variables ----------
+    let photos = [];
+    let filteredPhotos = [];
+    let currentModalIndex = 0;
+    let isAdminMode = false;
 
-// ---------- Global Variables ----------
-let photos = [];
-let filteredPhotos = [];
-let currentModalIndex = 0;
-let isAdminMode = false;
-
-// ---------- Initialize ----------
-document.addEventListener('DOMContentLoaded', () => {
-    loadPhotos();
-    setupEventListeners();
-});
-
-// ---------- Event Listeners ----------
-function setupEventListeners() {
-    document.addEventListener('keydown', (e) => {
-        if (document.getElementById('photoModal').classList.contains('active')) {
-            if (e.key === 'Escape') closeModal();
-            if (e.key === 'ArrowLeft') previousPhoto();
-            if (e.key === 'ArrowRight') nextPhoto();
-        }
+    document.addEventListener('DOMContentLoaded', function() {
+        loadPhotos();
+        setupEventListeners();
     });
-}
 
-// ---------- Admin ----------
-function toggleAdmin() {
-    const password = prompt("Enter admin password:");
-    const correctPassword = "Pulseofleaderhsip123";
+    function setupEventListeners() {
+        document.addEventListener('keydown', function(e) {
+            if (document.getElementById('photoModal').classList.contains('active')) {
+                if (e.key === 'Escape') closeModal();
+                if (e.key === 'ArrowLeft') previousPhoto();
+                if (e.key === 'ArrowRight') nextPhoto();
+            }
+        });
+    }
 
-    if (password === correctPassword) {
-        const panel = document.getElementById('adminPanel');
-        isAdminMode = true;
-        panel.classList.add('active');
-        showMessage("Admin access granted!", "success");
+    // ---------- Load and Save ----------
+    function loadPhotos() {
+        const savedPhotos = JSON.parse(localStorage.getItem('photobooth_photos') || '[]');
+        photos = savedPhotos;
+        filteredPhotos = [...photos];
         updateGallery();
-    } else {
-        alert("Incorrect password! Access denied.");
-    }
-}
-
-// ---------- File Handling ----------
-function handleFileSelect(event) {
-    const files = Array.from(event.target.files);
-    uploadFiles(files);
-}
-
-function handleDragOver(event) {
-    event.preventDefault();
-    event.currentTarget.classList.add('drag-over');
-}
-
-function handleDragLeave(event) {
-    event.currentTarget.classList.remove('drag-over');
-}
-
-function handleDrop(event) {
-    event.preventDefault();
-    event.currentTarget.classList.remove('drag-over');
-    const files = Array.from(event.dataTransfer.files);
-    uploadFiles(files);
-}
-
-// ---------- Upload Files ----------
-async function uploadFiles(files) {
-    const imageFiles = files.filter(file => file.type.startsWith('image/'));
-    if (!imageFiles.length) {
-        showMessage("Please select valid image files.", "error");
-        return;
+        updateStats();
     }
 
-    showLoading(true);
+    function savePhotos() {
+        localStorage.setItem('photobooth_photos', JSON.stringify(photos));
+    }
 
-    for (let i = 0; i < imageFiles.length; i++) {
-        const file = imageFiles[i];
-        if (file.size > 10 * 1024 * 1024) {
-            showMessage(`File ${file.name} is too large (max 10MB).`, "error");
-            continue;
-        }
+    // ---------- Admin Panel ----------
+    function toggleAdmin() {
+        const password = prompt("Enter admin password:");
+        const correctPassword = "Pulseofleaderhsip123";
 
-        const storageRef = ref(storage, `photos/${Date.now()}_${file.name}`);
-        try {
-            await uploadBytes(storageRef, file);
-            const url = await getDownloadURL(storageRef);
-
-            await addDoc(photosCollection, {
-                name: file.name,
-                src: url,
-                uploadDate: new Date().toISOString(),
-                size: file.size
-            });
-
-        } catch (err) {
-            console.error(err);
-            showMessage(`Failed to upload ${file.name}`, "error");
+        if (password === correctPassword) {
+            const panel = document.getElementById('adminPanel');
+            isAdminMode = true;
+            panel.classList.add('active');
+            showMessage("Admin access granted!", "success");
+        } else {
+            alert("Incorrect password! Access denied.");
         }
     }
 
-    await loadPhotos();
-    showLoading(false);
-    showMessage(`Successfully uploaded ${imageFiles.length} photo(s)!`, "success");
-    document.getElementById('fileInput').value = '';
-}
-
-// ---------- Load Photos ----------
-async function loadPhotos() {
-    const snapshot = await getDocs(photosCollection);
-    photos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    filteredPhotos = [...photos];
-    updateGallery();
-    updateStats();
-}
-
-// ---------- Gallery ----------
-function updateGallery() {
-    const grid = document.getElementById('galleryGrid');
-    const emptyState = document.getElementById('emptyState');
-
-    if (!filteredPhotos.length) {
-        grid.style.display = 'none';
-        emptyState.style.display = 'block';
-        return;
+    // ---------- File Handling ----------
+    function handleFileSelect(event) {
+        const files = Array.from(event.target.files);
+        uploadFiles(files);
     }
 
-    grid.style.display = 'grid';
-    emptyState.style.display = 'none';
+    function handleDragOver(event) {
+        event.preventDefault();
+        event.currentTarget.classList.add('drag-over');
+    }
 
-    grid.innerHTML = filteredPhotos.map((photo, index) => `
-        <div class="photo-card fade-in" data-photo-id="${photo.id}">
-            <div class="photo-container">
-                <img src="${photo.src}" alt="${photo.name}" onclick="openModal(${index})">
-                <div class="photo-overlay">
-                    <div class="overlay-buttons">
-                        <button class="btn btn-primary" onclick="openModal(${index})">👁️ View</button>
-                        <button class="btn btn-success" onclick="downloadPhoto('${photo.id}')">💾 Download</button>
+    function handleDragLeave(event) {
+        event.currentTarget.classList.remove('drag-over');
+    }
+
+    function handleDrop(event) {
+        event.preventDefault();
+        event.currentTarget.classList.remove('drag-over');
+        const files = Array.from(event.dataTransfer.files);
+        uploadFiles(files);
+    }
+
+    async function uploadFiles(files) {
+        const imageFiles = files.filter(file => file.type.startsWith('image/'));
+        if (imageFiles.length === 0) {
+            showMessage('Please select valid image files.', 'error');
+            return;
+        }
+
+        showLoading(true);
+
+        for (let i = 0; i < imageFiles.length; i++) {
+            const file = imageFiles[i];
+            if (file.size > 10 * 1024 * 1024) { // 10MB limit
+                showMessage(`File ${file.name} is too large (max 10MB).`, 'error');
+                continue;
+            }
+
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                const photo = {
+                    id: Date.now() + i,
+                    name: file.name,
+                    src: e.target.result,
+                    uploadDate: new Date().toISOString(),
+                    size: file.size
+                };
+
+                // Upload to Firebase
+                const storageRef = storage.ref(`photos/${photo.id}_${photo.name}`);
+                const uploadTask = storageRef.put(file);
+                uploadTask.on('state_changed', 
+                    null, 
+                    (error) => showMessage(`Upload failed: ${error.message}`, 'error'),
+                    async () => {
+                        photo.src = await uploadTask.snapshot.ref.getDownloadURL();
+                        photos.unshift(photo);
+                        savePhotos();
+                        if (i === imageFiles.length - 1) {
+                            setTimeout(() => {
+                                loadPhotos();
+                                showLoading(false);
+                                showMessage(`Successfully uploaded ${imageFiles.length} photo(s)!`, 'success');
+                                document.getElementById('fileInput').value = '';
+                            }, 500);
+                        }
+                    }
+                );
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    // ---------- Gallery ----------
+    function updateGallery() {
+        const grid = document.getElementById('galleryGrid');
+        const emptyState = document.getElementById('emptyState');
+
+        if (filteredPhotos.length === 0) {
+            grid.style.display = 'none';
+            emptyState.style.display = 'block';
+            return;
+        }
+
+        grid.style.display = 'grid';
+        emptyState.style.display = 'none';
+
+        grid.innerHTML = filteredPhotos.map((photo, index) => `
+            <div class="photo-card fade-in" data-photo-id="${photo.id}">
+                <div class="photo-container">
+                    <img src="${photo.src}" alt="${photo.name}" onclick="openModal(${index})">
+                    <div class="photo-overlay">
+                        <div class="overlay-buttons">
+                            <button class="btn btn-primary" onclick="openModal(${index})">👁️ View</button>
+                            <button class="btn btn-success" onclick="downloadPhoto(${photo.id})">💾 Download</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="photo-info">
+                    <div class="photo-title">${photo.name}</div>
+                    <div class="photo-meta">
+                        <div class="photo-date">📅 ${formatDate(photo.uploadDate)}</div>
+                        <div class="photo-actions">
+                            <button class="action-btn download-btn" onclick="downloadPhoto(${photo.id})">💾</button>
+                            ${isAdminMode ? `<button class="action-btn delete-btn" onclick="deletePhoto(${photo.id})">🗑️</button>` : ''}
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="photo-info">
-                <div class="photo-title">${photo.name}</div>
-                <div class="photo-meta">
-                    <div class="photo-date">📅 ${formatDate(photo.uploadDate)}</div>
-                    <div class="photo-actions">
-                        <button class="action-btn download-btn" onclick="downloadPhoto('${photo.id}')">💾</button>
-                        ${isAdminMode ? `<button class="action-btn delete-btn" onclick="deletePhoto('${photo.id}')">🗑️</button>` : ''}
-                    </div>
-                </div>
-            </div>
-        </div>
-    `).join('');
-}
-
-// ---------- Stats ----------
-function updateStats() {
-    document.getElementById('photoCount').textContent = `${photos.length} photos`;
-    const lastUpdate = photos.length > 0 ? 
-        formatDate(Math.max(...photos.map(p => new Date(p.uploadDate)))) : 'Never';
-    document.getElementById('lastUpdate').textContent = `Last updated: ${lastUpdate}`;
-}
-
-// ---------- Filters ----------
-function filterPhotos() {
-    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-    filteredPhotos = photos.filter(photo => photo.name.toLowerCase().includes(searchTerm));
-    updateGallery();
-}
-
-function filterByDate(period, event) {
-    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-    event.target.classList.add('active');
-
-    const now = new Date();
-    let startDate = new Date(0);
-    switch (period) {
-        case 'today': startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate()); break;
-        case 'week': startDate = new Date(now.getTime() - 7*24*60*60*1000); break;
-        case 'month': startDate = new Date(now.getFullYear(), now.getMonth(), 1); break;
+        `).join('');
     }
 
-    filteredPhotos = (period === 'all') ? [...photos] : photos.filter(p => new Date(p.uploadDate) >= startDate);
-    updateGallery();
-}
-
-// ---------- Modal ----------
-function openModal(index) {
-    currentModalIndex = index;
-    const modal = document.getElementById('photoModal');
-    document.getElementById('modalImage').src = filteredPhotos[index].src;
-    modal.classList.add('active');
-    document.body.style.overflow = 'hidden';
-}
-
-function closeModal() {
-    const modal = document.getElementById('photoModal');
-    modal.classList.remove('active');
-    document.body.style.overflow = 'auto';
-}
-
-function previousPhoto() {
-    if (currentModalIndex > 0) {
-        currentModalIndex--;
-        document.getElementById('modalImage').src = filteredPhotos[currentModalIndex].src;
-    }
-}
-
-function nextPhoto() {
-    if (currentModalIndex < filteredPhotos.length - 1) {
-        currentModalIndex++;
-        document.getElementById('modalImage').src = filteredPhotos[currentModalIndex].src;
-    }
-}
-
-// ---------- Photo Actions ----------
-async function downloadPhoto(photoId) {
-    const photo = photos.find(p => p.id === photoId);
-    if (!photo) return;
-    const link = document.createElement('a');
-    link.href = photo.src;
-    link.download = photo.name;
-    link.click();
-}
-
-async function deletePhoto(photoId) {
-    if (!confirm("Are you sure you want to delete this photo?")) return;
-
-    const photo = photos.find(p => p.id === photoId);
-    if (!photo) return;
-
-    try {
-        // Delete from storage
-        const storageRef = ref(storage, photo.src.split("?")[0]);
-        await deleteObject(storageRef);
-
-        // Delete from Firestore
-        await deleteDoc(doc(db, "photos", photoId));
-
-        await loadPhotos();
-        showMessage("Photo deleted successfully.", "success");
-    } catch (err) {
-        console.error(err);
-        showMessage("Failed to delete photo.", "error");
-    }
-}
-
-async function clearAllPhotos() {
-    if (!confirm("Are you sure you want to delete ALL photos?")) return;
-
-    for (let photo of photos) {
-        try {
-            const storageRef = ref(storage, photo.src.split("?")[0]);
-            await deleteObject(storageRef);
-            await deleteDoc(doc(db, "photos", photo.id));
-        } catch (err) { console.error(err); }
+    function updateStats() {
+        document.getElementById('photoCount').textContent = `${photos.length} photos`;
+        const lastUpdate = photos.length > 0 ? 
+            formatDate(Math.max(...photos.map(p => new Date(p.uploadDate)))) : 
+            'Never';
+        document.getElementById('lastUpdate').textContent = `Last updated: ${lastUpdate}`;
     }
 
-    await loadPhotos();
-    showMessage("All photos cleared.", "success");
-}
+    // ---------- Filters ----------
+    function filterPhotos() {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        filteredPhotos = photos.filter(photo => photo.name.toLowerCase().includes(searchTerm));
+        updateGallery();
+    }
 
-async function refreshGallery() {
-    showLoading(true);
-    await loadPhotos();
-    showLoading(false);
-    showMessage("Gallery refreshed!", "success");
-}
+    function filterByDate(period) {
+        document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+        event.target.classList.add('active');
 
-// ---------- Utilities ----------
-function formatDate(dateInput) {
-    const date = new Date(dateInput);
-    const now = new Date();
-    const diffDays = Math.ceil(Math.abs(now - date) / (1000*60*60*24));
-    if (diffDays === 1) return 'Today';
-    if (diffDays === 2) return 'Yesterday';
-    if (diffDays <= 7) return `${diffDays-1} days ago`;
-    return date.toLocaleDateString('en-US', {month:'short', day:'numeric', year: date.getFullYear() !== now.getFullYear() ? 'numeric': undefined});
-}
+        const now = new Date();
+        let startDate = new Date(0);
 
-function showMessage(text, type) {
-    const container = document.getElementById('messageContainer');
-    const message = document.createElement('div');
-    message.className = `message ${type}`;
-    message.textContent = text;
-    container.appendChild(message);
-    setTimeout(() => message.classList.add('show'), 100);
-    setTimeout(() => { message.classList.remove('show'); setTimeout(() => container.removeChild(message), 300); }, 3000);
-}
+        switch(period) {
+            case 'today': startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate()); break;
+            case 'week': startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000); break;
+            case 'month': startDate = new Date(now.getFullYear(), now.getMonth(), 1); break;
+        }
 
-function showLoading(show) {
-    const loading = document.getElementById('loading');
-    loading.style.display = show ? 'block' : 'none';
-}
+        filteredPhotos = period === 'all' ? [...photos] : photos.filter(p => new Date(p.uploadDate) >= startDate);
+        updateGallery();
+    }
 
-// ---------- Expose functions for HTML onclick ----------
-window.handleFileSelect = handleFileSelect;
-window.handleDragOver = handleDragOver;
-window.handleDragLeave = handleDragLeave;
-window.handleDrop = handleDrop;
-window.toggleAdmin = toggleAdmin;
-window.deletePhoto = deletePhoto;
-window.clearAllPhotos = clearAllPhotos;
-window.openModal = openModal;
-window.closeModal = closeModal;
-window.previousPhoto = previousPhoto;
-window.nextPhoto = nextPhoto;
-window.downloadPhoto = downloadPhoto;
-window.filterPhotos = filterPhotos;
-window.filterByDate = filterByDate;
-window.refreshGallery = refreshGallery;
+    // ---------- Modal ----------
+    function openModal(index) {
+        currentModalIndex = index;
+        const modal = document.getElementById('photoModal');
+        const modalImage = document.getElementById('modalImage');
+        modalImage.src = filteredPhotos[index].src;
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+        const modal = document.getElementById('photoModal');
+        modal.classList.remove('active');
+        document.body.style.overflow = 'auto';
+    }
+
+    function previousPhoto() {
+        if (currentModalIndex > 0) {
+            currentModalIndex--;
+            document.getElementById('modalImage').src = filteredPhotos[currentModalIndex].src;
+        }
+    }
+
+    function nextPhoto() {
+        if (currentModalIndex < filteredPhotos.length - 1) {
+            currentModalIndex++;
+            document.getElementById('modalImage').src = filteredPhotos[currentModalIndex].src;
+        }
+    }
+
+    // ---------- Photo Actions ----------
+    function downloadPhoto(photoId) {
+        const photo = photos.find(p => p.id === photoId);
+        if (photo) {
+            const link = document.createElement('a');
+            link.href = photo.src;
+            link.download = photo.name;
+            link.click();
+        }
+    }
+
+    function deletePhoto(photoId) {
+        if (confirm('Are you sure you want to delete this photo?')) {
+            photos = photos.filter(p => p.id !== photoId);
+            savePhotos();
+            loadPhotos();
+            showMessage('Photo deleted successfully.', 'success');
+        }
+    }
+
+    function clearAllPhotos() {
+        if (confirm('Are you sure you want to delete ALL photos? This cannot be undone.')) {
+            photos = [];
+            savePhotos();
+            loadPhotos();
+            showMessage('All photos cleared.', 'success');
+        }
+    }
+
+    function refreshGallery() {
+        showLoading(true);
+        setTimeout(() => {
+            loadPhotos();
+            showLoading(false);
+            showMessage('Gallery refreshed!', 'success');
+        }, 1000);
+    }
+
+    // ---------- Utilities ----------
+    function formatDate(dateInput) {
+        const date = new Date(dateInput);
+        const now = new Date();
+        const diffTime = Math.abs(now - date);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+        if (diffDays === 1) return 'Today';
+        if (diffDays === 2) return 'Yesterday';
+        if (diffDays <= 7) return `${diffDays - 1} days ago`;
+
+        return date.toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: date.getFullYear() !== now.getFullYear() ? 'numeric' : undefined
+        });
+    }
+
+    function showMessage(text, type) {
+        const container = document.getElementById('messageContainer');
+        const message = document.createElement('div');
+        message.className = `message ${type}`;
+        message.textContent = text;
+        container.appendChild(message);
+
+        setTimeout(() => message.classList.add('show'), 100);
+        setTimeout(() => {
+            message.classList.remove('show');
+            setTimeout(() => container.removeChild(message), 300);
+        }, 3000);
+    }
+
+    function showLoading(show) {
+        const loading = document.getElementById('loading');
+        loading.style.display = show ? 'block' : 'none';
+    }
 </script>
 </html>
-
-
