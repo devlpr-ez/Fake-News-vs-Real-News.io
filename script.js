@@ -134,4 +134,18 @@ function handleSwipe() {
     }
   }
 }
+function toggleMobileMenu() {
+    const navLinks = document.getElementById('navLinks');
+    navLinks.classList.toggle('active'); // Add class 'active' to show/hide mobile menu
+  }
+
+  // Close mobile menu when clicking a link (for mobile UX)
+  document.querySelectorAll('#navLinks a').forEach(link => {
+    link.addEventListener('click', () => {
+      const navLinks = document.getElementById('navLinks');
+      if(navLinks.classList.contains('active')){
+        navLinks.classList.remove('active');
+      }
+    });
+  });
 });
