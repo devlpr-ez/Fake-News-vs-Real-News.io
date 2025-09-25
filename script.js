@@ -1,13 +1,8 @@
     function openModal(id){ document.getElementById(id).style.display='flex'; }
 
-    // Auto show login modal on first 2 visits
+    // Always show login modal when website is opened
     document.addEventListener('DOMContentLoaded', function() {
-      let loginCount = parseInt(localStorage.getItem('loginModalCount')) || 0;
-      if (loginCount < 2) {
-        openModal('loginModal');
-        loginCount++;
-        localStorage.setItem('loginModalCount', loginCount);
-      }
+      openModal('loginModal');
     });
     function closeModal(id){ document.getElementById(id).style.display='none'; }
     function switchModal(closeId, openId){
@@ -194,3 +189,4 @@ function switchModal(closeId, openId) {
   });
 });
 });
+
