@@ -1,0 +1,316 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+    <title>Fake News vs Real News</title>
+    <link rel="icon" type="image/png" href="image/7.png">
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js"></script>
+</head>
+<body>
+<!-- Navigation Header -->
+<nav class="navbar">
+  <div class="nav-container">
+
+    <!-- 🔹 Left Side Logo (Image) -->
+<div class="logo">
+  <img src="image/logo.jpg" alt="Fake News vs Real News Logo">
+  <span>Fake News vs Real News.com</span>
+</div>
+
+
+    <!-- 🔹 Right Side Navigation -->
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="about.html">About</a></li>
+
+      <!-- 🔹 Auth Buttons -->
+      <li class="nav-auth">
+        <a href="#" class="nav-btn login" onclick="openModal('loginModal')">Login</a>
+        <a href="#" class="nav-btn signup" onclick="openModal('signupModal')">Sign Up</a>
+      </li>
+    </ul>
+
+    <!-- 🔹 Mobile Menu Toggle -->
+    <div class="menu-toggle" onclick="toggleMobileMenu()">
+      <span></span><span></span><span></span>
+    </div>
+
+  </div>
+</nav>
+
+
+    <div class="container">
+        <!-- HOME SECTION -->
+        <div id="home" class="page-section active">
+            <div class="header">
+                <h1>Fake News vs Real News</h1>
+                <p class="subtitle">Learn to spot the difference and become a media literacy expert!</p>
+            </div>
+
+            <div class="comparison-section">
+                <div class="news-card fake-news">
+                    <div class="card-header">
+                        <div class="icon fake-icon">❌</div>
+                        <h2 class="card-title">Fake News Characteristics</h2>
+                    </div>
+                    <ul class="characteristics">
+                        <li>Sensational, clickbait headlines designed to grab attention</li>
+                        <li>Lacks credible sources or author information</li>
+                        <li>Contains emotional language and bias</li>
+                        <li>No publication date or recent fabricated date</li>
+                        <li>Poor grammar, spelling errors, and unprofessional formatting</li>
+                        <li>Unverifiable claims with no supporting evidence</li>
+                        <li>Promotes conspiracy theories or extreme viewpoints</li>
+                        <li>Shared primarily on social media without fact-checking</li>
+                    </ul>
+                </div>
+
+                <div class="news-card real-news">
+                    <div class="card-header">
+                        <div class="icon real-icon">✅</div>
+                        <h2 class="card-title">Real News Characteristics</h2>
+                    </div>
+                    <ul class="characteristics">
+                        <li>Clear, factual headlines that accurately represent content</li>
+                        <li>Named authors with credentials and contact information</li>
+                        <li>Balanced reporting with multiple perspectives</li>
+                        <li>Clear publication date and timely reporting</li>
+                        <li>Professional writing with proper grammar and formatting</li>
+                        <li>Multiple credible sources and verifiable information</li>
+                        <li>Transparent corrections and retractions when needed</li>
+                        <li>Published by established, reputable news organizations</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="examples-section">
+                <h2> Red Flags to Watch For</h2>
+                
+                <div class="example-card">
+                    <div class="example-title">❗ Suspicious Headlines</div>
+                    <p><strong>Fake:</strong> "DOCTORS HATE HIM! This ONE TRICK Will CURE Everything!"<br>
+                    <strong>Real:</strong> "New Study Shows Promising Results for Cancer Treatment"</p>
+                </div>
+
+                <div class="example-card">
+                    <div class="example-title">🔍 Source Verification</div>
+                    <p><strong>Fake:</strong> "According to experts..." (no names given)<br>
+                    <strong>Real:</strong> "Dr. Jane Smith, epidemiologist at Harvard Medical School, states..."</p>
+                </div>
+
+                <div class="example-card">
+                    <div class="example-title">📅 Date Check</div>
+                    <p><strong>Fake:</strong> Old stories republished without dates or with misleading timestamps<br>
+                    <strong>Real:</strong> Clear publication dates and updates when stories develop</p>
+                </div>
+            </div>
+            <div class="carousel-container">
+  <h3>How to spot fake news in eight simple steps</h3>
+  <div class="carousel">
+    <div class="carousel-track">
+      <img src="image/1.png" alt="Red Flag 1">
+      <img src="image/2.png" alt="Red Flag 2">
+      <img src="image/3.png" alt="Red Flag 3">
+    </div>
+  </div>
+</div>
+
+            
+
+            <div class="quiz-section">
+                <h2>🧠 Test Your Skills: Fake or Real?</h2>
+                
+                <div class="quiz-question" data-question="0">
+      <h3>Question 1:</h3>
+      <p>"BREAKING: Scientists Discover Aliens Living Among Us..."</p>
+      <div class="quiz-options">
+          <div class="quiz-option" data-answer="fake">Fake News</div>
+          <div class="quiz-option" data-answer="real">Real News</div>
+      </div>
+  </div>
+
+                <div class="quiz-question" data-question="1">
+                    <h3>Question 2:</h3>
+                    <p>"Local Hospital Reports 15% Increase in Emergency Room Visits This Quarter, Cites Flu Season as Primary Factor"</p>
+                    <div class="quiz-options">
+                        <div class="quiz-option" data-answer="real">Real News - Factual, sourced reporting</div>
+                        <div class="quiz-option" data-answer="fake">Fake News - Misleading statistics</div>
+                    </div>
+                    <p><strong>Analysis:</strong> This headline is factual, cites a specific source (local hospital), and provides reasonable context.</p>
+                </div>
+
+                <div class="quiz-question" data-question="2">
+                    <h3>Question 3:</h3>
+                    <p>"You Won't BELIEVE What This Celebrity Did Next! Number 7 Will SHOCK You!"</p>
+                    <div class="quiz-options">
+                        <div class="quiz-option" data-answer="fake">Fake News - Classic clickbait format</div>
+                        <div class="quiz-option" data-answer="real">Real News - Entertainment reporting</div>
+                    </div>
+                    <p><strong>Analysis:</strong> This is classic clickbait designed to generate clicks rather than inform readers.</p>
+                </div>
+
+                <button id="startBtn" class="btn" onclick="startQuiz()">Start Quiz</button>
+  <button class="btn" onclick="nextQuestion()" id="nextBtn" style="display:none;">Next Question</button>
+  <button class="btn btn-success" onclick="resetQuiz()" id="resetBtn" style="display:none;">Try Again</button>
+  
+  <div id="score" class="score" style="display:none;"></div>
+            </div>
+
+            <div class="tips-section">
+                <h2>💡 Pro Tips for Spotting Fake News</h2>
+                
+                <div class="tip">
+                    <strong>🔍 The CRAAP Test:</strong> Check Currency, Relevance, Authority, Accuracy, and Purpose of any news source.
+                </div>
+                
+                <div class="tip">
+                    <strong>📱 Reverse Image Search:</strong> Use Google Images to verify if photos are authentic or taken from other contexts.
+                </div>
+                
+                <div class="tip">
+                    <strong>🌐 Cross-Reference:</strong> Check if the same story is reported by multiple reputable news sources.
+                </div>
+                
+                <div class="tip">
+                    <strong>⚠️ Trust Your Gut:</strong> If something sounds too outrageous to be true, it probably is.
+                </div>
+                
+                <div class="tip">
+                    <strong>📚 Fact-Check:</strong> Use sites like Snopes, FactCheck.org, or PolitiFact to verify suspicious claims.
+                </div>
+            </div>
+        </div>
+
+        </div>
+
+                
+<footer class="footer">
+  <div class="footer-container">
+
+    <!-- 📢 Ads Section -->
+    <div class="ads-grid">
+  <div class="ad-card">
+    <a href="https://www.snopes.com/" target="_blank">
+      <img src="image/4.png" alt="Ad 1">
+    </a>
+    <p>Fake or Real? Learn how to spot clickbait headlines!</p>
+  </div>
+
+  <div class="ad-card">
+    <a href="https://factcheck.org/" target="_blank">
+      <img src="image/5.png" alt="Ad 2">
+    </a>
+    <p>Trusted News Sources – Stay updated with real facts.</p>
+  </div>
+
+  <div class="ad-card">
+    <a href="https://www.politifact.com/" target="_blank">
+      <img src="image/6.png" alt="Ad 3">
+    </a>
+    <p>Fact-check before you share. Stop the spread of fake news!</p>
+  </div>
+</div>
+
+
+    <!-- 📩 Contact Form -->
+    <div class="contact-form">
+      <h2 style="text-align: center; margin-bottom: 30px;">Send us a Message</h2>
+      <form id="contactForm">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="firstName">First Name *</label>
+            <input type="text" id="firstName" name="firstName" required>
+          </div>
+          <div class="form-group">
+            <label for="lastName">Last Name *</label>
+            <input type="text" id="lastName" name="lastName" required>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="email">Email Address *</label>
+          <input type="email" id="email" name="email" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="message">Message *</label>
+          <textarea id="message" name="message" placeholder="Tell us how we can help you..." required></textarea>
+        </div>
+        
+        <div style="text-align: center;">
+          <button type="submit" class="btn btn-success" style="padding: 15px 40px;">Send Message</button>
+        </div>
+      </form>
+    </div>
+
+  <div class="footer-credit">
+    <p>Developed by <strong>ZEDRIX AND JOSH</strong> © 2025</p>
+    <p> GANDA MO MA'AM BAYER</p>
+  </div>
+</footer>
+</footer>
+
+
+<div id="loginModal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeModal('loginModal')">&times;</span>
+      <h1>Welcome Back! 👋</h1>
+      <p>Sign in to access your personalized dashboard and premium features.</p>
+      <form>
+        <div class="form-group">
+          <label for="loginEmail">Email Address</label>
+          <input type="email" id="loginEmail" placeholder="your@email.com" required/>
+        </div>
+        <div class="form-group">
+          <label for="loginPassword">Password</label>
+          <input type="password" id="loginPassword" placeholder="Enter your password" required/>
+        </div>
+        <button type="submit">Sign In</button>
+      </form>
+      <div class="auth-switch">
+        <p>Don't have an account? <a onclick="switchModal('loginModal','signupModal')">Create one here</a></p>
+        <p><a href="#" style="font-size:0.9em;">Forgot your password?</a></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SIGNUP MODAL -->
+  <div id="signupModal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeModal('signupModal')">&times;</span>
+      <h1>Join the Fight! </h1>
+      <p>Create your account and start spotting fake news today.</p>
+      <form>
+        <div class="form-group">
+          <label for="signupName">Full Name</label>
+          <input type="text" id="signupName" placeholder="John Doe" required/>
+        </div>
+        <div class="form-group">
+          <label for="signupEmail">Email Address</label>
+          <input type="email" id="signupEmail" placeholder="your@email.com" required/>
+        </div>
+        <div class="form-group">
+          <label for="signupPassword">Password</label>
+          <input type="password" id="signupPassword" placeholder="Enter your password" required/>
+        </div>
+        <button type="submit">Sign Up</button>
+      </form>
+      <div class="auth-switch">
+        <p>Already have an account? <a onclick="switchModal('signupModal','loginModal')">Sign in here</a></p>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
+
+
+
+
+    
+
+
+
+
+    

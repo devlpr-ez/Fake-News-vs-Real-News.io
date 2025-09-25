@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - Fake News vs Real News</title>
+    <link rel="icon" type="image/png" href="image/7.png">
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js"></script>
+</head>
+<body>
+    <!-- Navigation Header -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <img src="image/logo.jpg" alt="Fake News vs Real News Logo">
+                <span>Fake News vs Real News.com</span>
+            </div>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html" class="active">About</a></li>
+                <div class="nav-auth">
+                    <a href="#" class="nav-btn login" onclick="openModal('loginModal')">Login</a>
+                    <a href="#" class="nav-btn signup" onclick="openModal('signupModal')">Sign Up</a>
+                </div>
+            </ul>
+            <div class="menu-toggle" onclick="toggleMobileMenu()">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+    </nav>
+    <div id="loginModal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeModal('loginModal')">&times;</span>
+      <h1>Welcome Back! 👋</h1>
+      <p>Sign in to access your personalized dashboard and premium features.</p>
+      <form>
+        <div class="form-group">
+          <label for="loginEmail">Email Address</label>
+          <input type="email" id="loginEmail" placeholder="your@email.com" required/>
+        </div>
+        <div class="form-group">
+          <label for="loginPassword">Password</label>
+          <input type="password" id="loginPassword" placeholder="Enter your password" required/>
+        </div>
+        <button type="submit">Sign In</button>
+      </form>
+      <div class="auth-switch">
+        <p>Don't have an account? <a onclick="switchModal('loginModal','signupModal')">Create one here</a></p>
+        <p><a href="#" style="font-size:0.9em;">Forgot your password?</a></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SIGNUP MODAL -->
+  <div id="signupModal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeModal('signupModal')">&times;</span>
+      <h1>Join the Fight! </h1>
+      <p>Create your account and start spotting fake news today.</p>
+      <form>
+        <div class="form-group">
+          <label for="signupName">Full Name</label>
+          <input type="text" id="signupName" placeholder="John Doe" required/>
+        </div>
+        <div class="form-group">
+          <label for="signupEmail">Email Address</label>
+          <input type="email" id="signupEmail" placeholder="your@email.com" required/>
+        </div>
+        <div class="form-group">
+          <label for="signupPassword">Password</label>
+          <input type="password" id="signupPassword" placeholder="Enter your password" required/>
+        </div>
+        <button type="submit">Sign Up</button>
+      </form>
+      <div class="auth-switch">
+        <p>Already have an account? <a onclick="switchModal('signupModal','loginModal')">Sign in here</a></p>
+      </div>
+    </div>
+  </div>
+
+    <!-- About Section -->
+    <section class="about-section">
+        <div class="container">
+            <h1>About This Website</h1>
+            <div class="about-content">
+                <h2>Welcome to </h2>
+                <strong>Fake News vs Real News</strong>! This website was developed to help people identify fake news, understand the characteristics of real news, and improve media literacy.</p>
+                
+                <p>Our goal is to provide easy-to-understand guidance, tips, and examples that empower users to spot misinformation online. Whether you are a student, teacher, or just curious about the news, this platform is here to educate and inform.</p>
+                
+                <h2>Developer Information</h2>
+<p>This website was created by <strong>Zedrix T. and Josh G.</strong> from <strong>Asian Institute of Computer Studies</strong>. You can reach out via email at <a href="https://mail.google.com/mail/?view=cm&fs=1&to=jjemonmark@gmail.com" target="_blank">jjemonmark@gmail.com</a>
+.</p>
+
+                
+                <h2>Why We Share This Information</h2>
+                <p>The internet is full of information, but not all of it is accurate. By sharing tools, examples, and tips on spotting fake news, we aim to promote critical thinking and responsible consumption of media.</p>
+                
+                <p>We believe that an informed society is a stronger society. This platform is free to use and share with anyone who wants to learn more about spotting misinformation.</p>
+            </div>
+        </div>
+    </section>
+
+    </footer>
+</body>
+</html>
