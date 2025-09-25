@@ -837,4 +837,33 @@
 .footer-credit strong {
   color: #fff;  /* highlight your name */
 }
+/* Hide menu on mobile by default */
+.nav-links {
+  display: flex;
+  gap: 20px;
+}
+
+@media screen and (max-width: 768px) {
+  .nav-links {
+    position: absolute;
+    top: 70px; /* height of navbar */
+    right: 0;
+    background-color: #fff;
+    flex-direction: column;
+    width: 200px;
+    display: none; /* hidden by default */
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    z-index: 100;
+  }
+
+  .nav-links.active {
+    display: flex; /* show menu when toggled */
+  }
+
+  .menu-toggle {
+    display: block;
+    cursor: pointer;
+  }
+}
+
 
