@@ -1,4 +1,14 @@
     function openModal(id){ document.getElementById(id).style.display='flex'; }
+
+    // Auto show login modal on first 2 visits
+    document.addEventListener('DOMContentLoaded', function() {
+      let loginCount = parseInt(localStorage.getItem('loginModalCount')) || 0;
+      if (loginCount < 2) {
+        openModal('loginModal');
+        loginCount++;
+        localStorage.setItem('loginModalCount', loginCount);
+      }
+    });
     function closeModal(id){ document.getElementById(id).style.display='none'; }
     function switchModal(closeId, openId){
       closeModal(closeId);
@@ -146,7 +156,41 @@ document.addEventListener('DOMContentLoaded', function() {
     if (navLinks.classList.contains('active') && !navLinks.contains(e.target) && !menuToggle.contains(e.target)) {
       navLinks.classList.remove('active');
     }
+    function openModal(modalId) {
+  // Check how many times the login modal has been opened
+  let loginCount = parseInt(localStorage.getItem('loginCount')) || 0;
+
+  if (modalId === 'loginModal') {
+    if (loginCount < 2) {
+      document.getElementById(modalId).style.display = 'flex';
+      loginCount++;
+      localStorage.setItem('loginCount', loginCount);
+    } else {
+      console.log('Login modal has reached the maximum number of displays.');
+    }
+  } else {
+    // For other modals like signup, just open normally
+    document.getElementById(modalId).style.display = 'flex';
+  }
+}
+
+function closeModal(modalId) {
+  document.getElementById(modalId).style.display = 'none';
+}
+
+// Optional: click outside modal to close
+window.onclick = function(event) {
+  const modal = document.getElementById('loginModal');
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+}
+
+// Switch between login and signup
+function switchModal(closeId, openId) {
+  closeModal(closeId);
+  openModal(openId);
+}
   });
 });
-
 });
